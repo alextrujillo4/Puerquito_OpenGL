@@ -11,7 +11,7 @@
 #include <iostream>
 
 GLfloat light_diffuse[] = {1.0, 0.0, 0.0, 1.0};  /* Red diffuse light. */
-GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location. */
+GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};  /* Infinite light location*/
 GLfloat n[6][3] = {  /* Normals for the 6 faces of a cube. */
     {-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
     {0.0, -1.0, 0.0}, {0.0, 0.0, 1.0}, {0.0, 0.0, -1.0} };
@@ -22,7 +22,6 @@ GLfloat v[8][3];  /* Will be filled in with X,Y,Z vertexes. */
 
 void drawBox(void){
     int i;
-    
     for (i = 0; i < 6; i++) {
         glBegin(GL_QUADS);
         glNormal3fv(&n[i][0]);
