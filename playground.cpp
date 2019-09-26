@@ -1,36 +1,21 @@
 #include <GL/glew.h>
 #include <glfw3.h>
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
 
 
-   GLfloat point_edges_body[] = {
-       0,1,
-       0,3,
-       0,4,
-       2,1,
-       2,3,
-       2,7,
-       6,3,
-       6,4,
-       6,7,
-       5,1,
-       5,4,
-       5,7
-   };
-
-
-    GLfloat vertices_body[] = {
+   GLfloat vertices_body[] = {
         300, -300, 0,
         300, 225, 0,
         -300, 225, 0,
         -300, -300, 0,
         300, -300, 0,
-        300, 225, 900,
-        -300, -300, 900,
-        -300, 225,900 ,
+        300, 225, 300,
+        -300, -300, 300,
+        -300, 225,300 ,
     };
+
 
 
 
@@ -43,6 +28,7 @@ int main( void )
     {
         return -1;
     }
+    
     
     // Create a windowed mode window and its OpenGL context
     window = glfwCreateWindow( SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL );
@@ -59,7 +45,7 @@ int main( void )
     glViewport( 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
     glMatrixMode( GL_PROJECTION ); // projection matrix defines the properties of the camera that views the objects in the world coordinate frame. Here you typically set the zoom factor, aspect ratio and the near and far clipping planes
     glLoadIdentity( ); // replace the current matrix with the identity matrix and starts us a fresh because matrix transforms such as glOrpho and glRotate cumulate, basically puts us at (0, 0, 0)
-    glOrtho( -(SCREEN_WIDTH), SCREEN_WIDTH, -(SCREEN_HEIGHT), SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
+    glOrtho( -900, SCREEN_WIDTH, -900, SCREEN_HEIGHT, 0, 1 ); // essentially set coordinate system
     glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
     glLoadIdentity( ); // same as above comment
     
@@ -68,8 +54,9 @@ int main( void )
     // Loop until the user closes the window
     while ( !glfwWindowShouldClose( window ) )
     {
-        glClear( GL_COLOR_BUFFER_BIT );
-        
+          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+              glMatrixMode(GL_MODELVIEW);     // To operate on model-view matrix
+            
         // Render OpenGL here
         glEnable( GL_LINE_SMOOTH );
         glEnable( GL_LINE_STIPPLE );
@@ -82,8 +69,10 @@ int main( void )
         glDisableClientState( GL_VERTEX_ARRAY );
         glPopAttrib( );
         glDisable( GL_LINE_STIPPLE );
-        glDisable( GL_LINE_SMOOTH );
+ 
         
+         
+      
         
         // Swap front and back buffers
         glfwSwapBuffers( window );
