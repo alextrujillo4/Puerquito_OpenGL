@@ -8,9 +8,46 @@ using namespace glm;
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
+GLfloat vertices[] ={
+    // front face
+    200,300,-600 , // top left &1
+    400,300,-600 , // top right &2
+    400,100,-600 , // bottom right &4
+    200,100,-600, // bottom left &3
+    
+    // back face
+    200, 300, -300 , // top left &5
+    400, 300, -300 , // top right &6
+    400, 100, -300 , // bottom right &8
+    200, 100, -300 , // bottom left &7
+    
+    // left face
+    200,300,-600 , // top left &1
+    200, 300, -300 , // top right &5
+    200, 100, -300 , // bottom right &7
+    200,100,-600, // bottom left &3
+    
+    // right face
+    400, 300, -300 ,// top left &6
+    400,300,-600 ,  // top right &2
+    400,100,-600 , // bottom right &4
+    400, 100, -300 , // bottom left &8
+    
+    // top face
+    200,300,-600 , // top left &1
+    400,300,-600 ,  // top right &2
+    400, 300, -300 , // bottom right &6
+    200, 300, -300 ,// bottom left &5
+    
+    // top face
+    200, 100, -300 , // top left & 7
+    200,100,-600, // top right &3
+    400,100,-600 ,// bottom right &4
+    400, 100, -300 , // bottom left &8
+};
 
 void keyCallback( GLFWwindow *window, int key, int scancode, int action, int mods );
-void DrawCube( GLfloat centerPosX, GLfloat centerPosY, GLfloat centerPosZ, GLfloat edgeLength );
+void DrawPolygon(GLfloat vertices[] );
 
 GLfloat rotationX = 0.0f;
 GLfloat rotationY = 0.0f;
@@ -67,11 +104,7 @@ int main( void )
         glRotatef( rotationX, 1, 0, 0 );
         glRotatef( rotationY, 0, 1, 0 );
         glTranslatef( -halfScreenWidth, -halfScreenHeight, 500 );
-        
-        DrawCube( halfScreenWidth, halfScreenHeight, -500, 100 );
-        DrawCube( halfScreenWidth+150, halfScreenHeight+150, -500, 100 );
-
-        
+        DrawPolygon(vertices);
         glPopMatrix();
 
         
@@ -118,56 +151,15 @@ void keyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
     }
 }
 
-
-void DrawCube( GLfloat centerPosX, GLfloat centerPosY, GLfloat centerPosZ, GLfloat edgeLength )
-{
-    GLfloat halfSideLength = edgeLength * 0.5f;
-    
-    GLfloat vertices[] =
-    {
-        // front face
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // top left
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // top right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength, // bottom right
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength, // bottom left
-        
-        // back face
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // top left
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // top right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // bottom right
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // bottom left
-        
-        // left face
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // top left
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // top right
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // bottom right
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength, // bottom left
-        
-        // right face
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // top left
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // top right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // bottom right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength, // bottom left
-        
-        // top face
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // top left
-        centerPosX - halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // top right
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ - halfSideLength, // bottom right
-        centerPosX + halfSideLength, centerPosY + halfSideLength, centerPosZ + halfSideLength, // bottom left
-        
-        // top face
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength, // top left
-        centerPosX - halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // top right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ - halfSideLength, // bottom right
-        centerPosX + halfSideLength, centerPosY - halfSideLength, centerPosZ + halfSideLength  // bottom left
-    };
-    
+void DrawPolygon( GLfloat vertices[] ){
     glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     //glColor3f( colour[0], colour[1], colour[2] );
     glEnableClientState( GL_VERTEX_ARRAY );
     glVertexPointer( 3, GL_FLOAT, 0, vertices );
+    
 
     glDrawArrays( GL_QUADS, 0, 24 );
     
     glDisableClientState( GL_VERTEX_ARRAY );
 }
+
