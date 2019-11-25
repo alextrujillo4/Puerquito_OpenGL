@@ -1,22 +1,28 @@
 /* Integrantes:
- Esthephany Ayala
- Valentin Trujillo
- Alberto Bermea
- 
- Este codigo esta basado en el tutorial de
- Sonar Systems
- Link: https://www.youtube.com/watch?v=vcMox6i8f4Y
- */
+Esthephany Ayala
+Valentin Trujillo
+Alberto Bermea
+
+Este codigo esta basado en el tutorial de
+Sonar Systems
+Link: https://www.youtube.com/watch?v=vcMox6i8f4Y
+*/
 
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include "SOIL2/SOIL2.h"
+
+
+
+//Reading a PPM file
+#include <iostream>
+#include <iomanip>
+#include <fstream>
+
 
 #include <iostream>
 #include <cstdlib>
-
-
-
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
@@ -24,104 +30,13 @@
 
 GLenum fill_mode = GL_FILL;
 
-/*
-GLuint loadBMP_custom (const char * imagepath){
-    
-    printf("Reading image", imagepath);
-    
-    
-    // Lectura de información del encabezado del archivo
-    unsigned char header[54]; // Each BMP file begins by a 54-bytes header
-    unsigned int dataPos;     // Position in the file where the actual data begins
-    unsigned int width, height;
-    unsigned int imageSize;   // = width*height*3
-    // Información RGB
-    unsigned char * data;
-    
-    // Apertura del archivo
-    FILE * file = fopen(imagepath,"rb");
-    if (!file){
-        printf("Image could not be opened\n", imagepath);
-        getchar();
-        return 0;
-        
-    }
-    
-    if ( fread(header, 1, 54, file)!=54 ){ // If not 54 bytes read : problem
-        printf("Not a correct BMP file\n");
-        fclose(file);
-        return 0;
-    }
-    
-    if ( header[0]!='B' || header[1]!='M' ){
-        printf("Not a correct BMP file\n");
-        fclose(file);
-        return 0;
-    }
-    
-    if ( (int)&(header[0x1E])!=0 ) {
-        printf("not a correct bmpfile");
-        fclose(file);
-        return 0;
-    }
-    if ( (int)&(header[0x1C])!=24 ) {
-        printf("not a correct bmpfile");
-        fclose(file);
-        return 0;
-    }
-    
-    // Lectura de los enteros desde el arreglo de bytes
-    dataPos    = (int)&(header[0x0A]);
-    imageSize  = (int)&(header[0x22]);
-    width      = (int)&(header[0x12]);
-    height     = (int)&(header[0x16]);
-    
-    // Algunos archivos BMP tienen un mal formato, así que adivinamos la información faltante
-    if (imageSize==0)    imageSize=width*height*3; // 3 : un byte por cada componente Rojo (Red), Verde (Green) y Azul(Blue)
-    if (dataPos==0)      dataPos=54; // El encabezado del BMP está hecho de ésta manera
-    
-    // Se crea un buffer
-    data = new unsigned char [imageSize];
-    
-    // Leemos la información del archivo y la ponemos en el buffer
-    fread(data,1,imageSize,file);
-    
-    //Todo está en memoria ahora, así que podemos cerrar el archivo
-    fclose(file);
-    
-    // Se Crea una textura OpenGL
-    GLuint textureID;
-    glGenTextures(1, &textureID);
-    
-    // Se "Ata" la nueva textura : Todas las futuras funciones de texturas van a modificar esta textura
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    
-    // Se le pasa la imagen a OpenGL
-    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-    
-    delete [] data;
-    
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    
-    //glTextParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-     //glTextParameteri (GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-     //glTextParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //glTextParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    return 0
-}*/
-
-
-
-
-
 GLfloat color[] = {
     
-   1,0.5,0.8,
     1,0.5,0.8,
     1,0.5,0.8,
     1,0.5,0.8,
-   
+    1,0.5,0.8,
+    
     1,0.5,0.8,
     1,0.5,0.8,
     1,0.5,0.8,
@@ -144,36 +59,71 @@ GLfloat color[] = {
     
 };
 
+GLfloat color_amarillo_tranqui[] = {
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    0.9,0.9,0.5,
+    
+    
+};
+
 GLfloat color_rosaFuerte[] = {
     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
     
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
     
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
     
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
     
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
     
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4,
-     1,0,0.4
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4,
+    1,0,0.4
 };
 
 GLfloat color_negro[] = {
@@ -245,7 +195,7 @@ GLfloat color_blanco[] = {
 };
 
 GLfloat color_raro[] = {
-1,0.5,0.3,
+    1,0.5,0.3,
     1,0.5,0.3,
     1,0.5,0.3,
     1,0.5,0.3,
@@ -274,10 +224,7 @@ GLfloat color_raro[] = {
     1,0.5,0.3,
     1,0.5,0.3,
     1,0.5,0.3
-    
-   
-    
-    
+
 };
 
 GLfloat textVertices [] = {
@@ -292,6 +239,12 @@ GLfloat textVertices [] = {
 GLuint indices [] = {
     0,1,3,
     1,2,3
+};
+
+unsigned char CHECKERS [4][4]={{000,255,000,255},
+    {255,000,255,000},
+    {000,255,000,255},
+    {255,000,255,000}
 };
 
 GLfloat vertices[] ={
@@ -332,6 +285,562 @@ GLfloat vertices[] ={
     400, 100, -300 , // bottom left &8
 };
 
+GLfloat vertices_algo_blanco_1[] ={
+    // top face
+    200, 301,-600 , // top left &1
+    225, 301,-600 ,  // top right &2
+    225, 301, -575 , // bottom right &6
+    200, 301, -575 ,// bottom left &5
+    
+    200,301,-525 , // top left &1
+    225,301,-525 ,  // top right &2
+    225, 301,-475 , // bottom right &6
+    200, 301, -475 ,// bottom left &5
+    
+    200,301,-375, // top left &1
+    225,301,-375 ,  // top right &2
+    225, 301, -425 , // bottom right &6
+    200, 301, -425 ,// bottom left &5
+    
+    
+    //
+    275,301,-525 , // top left &1
+    225,301,-525 ,  // top right &2
+    225, 301, -575 , // bottom right &6
+    275, 301, -575 ,// bottom left &5
+    
+    275,301,-425 , // top left &1
+    225,301,-425 ,  // top right &2
+    225, 301, -475 , // bottom right &6
+    275, 301, -475 ,// bottom left &5
+    
+    275,301,-375 , // top left &1
+    225,301,-375 ,  // top right &2
+    225, 301, -325 , // bottom right &6
+    275, 301, -325 ,// bottom left &5
+    
+    
+};
+
+GLfloat vertices_algo_blanco_2[] ={
+    //
+    275,301,-600 , // top left &1
+    325,301,-600 ,  // top right &2
+    325, 301, -575 , // bottom right &6
+    275, 301, -575 ,// bottom left &5
+    
+    275,301,-525 , // top left &1
+    325,301,-525 ,  // top right &2
+    325, 301, -475 , // bottom right &6
+    275, 301, -475 ,// bottom left &5
+    
+    275,301,-375 , // top left &1
+    325,301,-375 ,  // top right &2
+    325, 301, -425 , // bottom right &6
+    275, 301, -425 ,// bottom left &5
+    
+    //
+    375,301,-525 , // top left &1
+    325,301,-525 ,  // top right &2
+    325, 301, -575 , // bottom right &6
+    375, 301, -575 ,// bottom left &5
+    
+    375,301,-425 , // top left &1
+    325,301,-425 ,  // top right &2
+    325, 301, -475 , // bottom right &6
+    375, 301, -475 ,// bottom left &5
+    
+    375,301,-375 , // top left &1
+    325,301,-375 ,  // top right &2
+    325, 301, -325, // bottom right &6
+    375, 301, -325 ,// bottom left &5
+};
+
+GLfloat vertices_algo_blanco_3[] ={
+    // top face
+    200, 301,-325 , // top left &1
+    225, 301,-325 ,  // top right &2
+    225, 301, -300 , // bottom right &6
+    200, 301, -300 ,// bottom left &5
+    
+    275,301,-325 , // top left &1
+    325,301,-325 ,  // top right &2
+    325, 301,-300 , // bottom right &6
+    275, 301, -300 ,// bottom left &5
+    
+    375,301,-325 , // top left &1
+    400,301,-325 ,  // top right &2
+    400, 301,-300 , // bottom right &6
+    375, 301, -300 ,// bottom left &5
+    
+    400, 301,-600 , // top left &1
+    375, 301,-600 ,  // top right &2
+    375, 301, -575 , // bottom right &6
+    400, 301, -575 ,// bottom left &5
+    
+    400,301,-525 , // top left &1
+    375,301,-525 ,  // top right &2
+    375, 301,-475 , // bottom right &6
+    400, 301, -475 ,// bottom left &5
+    
+    400,301,-375, // top left &1
+    375,301,-375 ,  // top right &2
+    375, 301, -425 , // bottom right &6
+    400, 301, -425 ,// bottom left &5
+    
+    
+};
+
+GLfloat vertices_blanco_atras_1[] ={
+    // top face
+    200, 300,-601 , // top left &1
+    225, 300, -601 , // bottom right &6
+    225, 275, -601 ,
+     200, 275,-601 , // bottom left &5
+    
+    200,125,-601, // top left &1
+      // top right &2
+    225, 125, -601 , // bottom right &6
+    225, 100, -601 ,// bottom left &5
+    200,100,-601 ,
+    
+    
+    //
+    225,275,-601 , // top left &1
+     // top right &2
+    275, 275, -601 , // bottom right &6
+    275, 225, -601 ,// bottom left &5
+     225,225,-601 ,
+    
+    225,175,-601 , // top left &1
+     // top right &2
+    275, 175,-601 , // bottom right &6
+    275, 125,-601 ,// bottom left &5
+     225,125,-601 ,
+    
+};
+
+GLfloat vertices_atras_negro_1[] ={
+    200,275,-601,
+    225,275,-601,
+    225,225,-601,
+    200,225,-601,
+    
+    200,175,-601,
+    225,175,-601,
+    225,125,-601,
+    200,125,-601,
+    
+    225,300,-601,
+    275,300,-601,
+    275,275,-601,
+    225,275,-601,
+    
+    225,225,-601,
+    275,225,-601,
+    275,175,-601,
+    225,175,-601,
+    
+    225,125,-601,
+    275,125,-601,
+    275,100,-601,
+    225,100,-601,
+};
+GLfloat vertices_atras_negro_2[]={
+    325,300,-601,
+    375,300,-601,
+    375,275,-601,
+    325,275,-601,
+    
+    325,225,-601,
+    375,225,-601,
+    375,175,-601,
+    325,175,-601,
+    
+    325,125,-601,
+    375,125,-601,
+    375,100,-601,
+    325,100,-601,
+    
+    375,275,-601,
+    400,275,-601,
+    400,225,-601,
+    375,225,-601,
+    
+    375,175,-601,
+    400,175,-601,
+    400,125,-601,
+    375,125,-601,
+    
+    375,175,-601,
+    400,175,-601,
+    400,125,-601,
+    375,125,-601,
+};
+
+GLfloat vertices_atras_negro_3[]={
+    275,275,-601,
+    325,275,-601,
+    325,225,-601,
+    275,225,-601,
+    
+    275,125,-601,
+    325,125,-601,
+    325,175,-601,
+    275,175,-601,
+    
+    325,125,-601,
+    375,125,-601,
+    375,100,-601,
+    325,100,-601,
+    
+    375,275,-601,
+    400,275,-601,
+    400,225,-601,
+    375,225,-601,
+    
+    375,175,-601,
+    400,175,-601,
+    400,125,-601,
+    375,125,-601,
+    
+    375,175,-601,
+    400,175,-601,
+    400,125,-601,
+    375,125,-601,
+};
+GLfloat vertices_atras_negro_1_a[] ={
+    200,275,-299,
+    225,275,-299,
+    225,225,-299,
+    200,225,-299,
+    
+    200,175,-299,
+    225,175,-299,
+    225,125,-299,
+    200,125,-299,
+    
+    225,300,-299,
+    275,300,-299,
+    275,275,-299,
+    225,275,-299,
+    
+    225,225,-299,
+    275,225,-299,
+    275,175,-299,
+    225,175,-299,
+    
+    225,125,-299,
+    275,125,-299,
+    275,100,-299,
+    225,100,-299,
+};
+GLfloat vertices_atras_negro_2_a[]={
+    325,300,-299,
+    375,300,-299,
+    375,275,-299,
+    325,275,-299,
+    
+    325,225,-299,
+    375,225,-299,
+    375,175,-299,
+    325,175,-299,
+    
+    325,125,-299,
+    375,125,-299,
+    375,100,-299,
+    325,100,-299,
+    
+    375,275,-299,
+    400,275,-299,
+    400,225,-299,
+    375,225,-299,
+    
+    375,175,-299,
+    400,175,-299,
+    400,125,-299,
+    375,125,-299,
+    
+    375,175,-299,
+    400,175,-299,
+    400,125,-299,
+    375,125,-299,
+};
+
+GLfloat vertices_atras_negro_3_a[]={
+    275,275,-299,
+    325,275,-299,
+    325,225,-299,
+    275,225,-299,
+    
+    275,125,-299,
+    325,125,-299,
+    325,175,-299,
+    275,175,-299,
+    
+    325,125,-299,
+    375,125,-299,
+    375,100,-299,
+    325,100,-299,
+    
+    375,275,-299,
+    400,275,-299,
+    400,225,-299,
+    375,225,-299,
+    
+    375,175,-299,
+    400,175,-299,
+    400,125,-299,
+    375,125,-299,
+    
+    375,175,-299,
+    400,175,-299,
+    400,125,-299,
+    375,125,-299,
+};
+
+GLfloat vertices_atras_blanco_3[]={
+    275,300,-601,
+    325,300,-601,
+    325,275,-601,
+    275,275,-601,
+    
+    275,225,-601,
+    325,225,-601,
+    325,175,-601,
+    275,175,-601,
+    
+    275,125,-601,
+    325,125,-601,
+    325,100,-601,
+    275,100,-601
+};
+
+GLfloat vertices_atras_blanco_2[]={
+    
+    325,225,-601,
+    375,225,-601,
+    375,275,-601,
+    325,275,-601,
+    
+    325,175,-601,
+    375,175,-601,
+    375,125,-601,
+    325,125,-601,
+    
+    375,300,-601,
+    400,300,-601,
+    400,275,-601,
+    375,275,-601,
+    
+    375,225,-601,
+    400,225,-601,
+    400,175,-601,
+    375,175,-601,
+    
+    375,125,-601,
+    375,125,-601,
+    375,100,-601,
+    375,100,-601,
+};
+GLfloat vertices_algo_negro_1[] ={
+    
+    //
+    200,301,-525 , // top left &1
+    225,301,-525 ,  // top right &2
+    225, 301, -575 , // bottom right &6
+    200, 301, -575 ,// bottom left &5
+    
+    200,301,-425 , // top left &1
+    225,301,-425 ,  // top right &2
+    225, 301, -475 , // bottom right &6
+    200, 301, -475 ,// bottom left &5
+    
+    200,301,-375 , // top left &1
+    225,301,-375 ,  // top right &2
+    225, 301, -325 , // bottom right &6
+    200, 301, -325 ,// bottom left &5
+    
+    //
+    275,301,-600 , // top left &1
+    225,301,-600 ,  // top right &2
+    225, 301, -575 , // bottom right &6
+    275, 301, -575 ,// bottom left &5
+    
+    275,301,-525 , // top left &1
+    225,301,-525 ,  // top right &2
+    225, 301, -475 , // bottom right &6
+    275, 301, -475 ,// bottom left &5
+    
+    275,301,-375 , // top left &1
+    225,301,-375 ,  // top right &2
+    225, 301, -425 , // bottom right &6
+    275, 301, -425 ,// bottom left &5
+};
+
+GLfloat vertices_algo_negro_2[] ={
+    //
+    400,301,-525 , // top left &1
+    375,301,-525 ,  // top right &2
+    375, 301, -575 , // bottom right &6
+    400, 301, -575 ,// bottom left &5
+    
+    400,301,-425 , // top left &1
+    375,301,-425 ,  // top right &2
+    375, 301, -475 , // bottom right &6
+    400, 301, -475 ,// bottom left &5
+    
+    400,301,-375 , // top left &1
+    375,301,-375 ,  // top right &2
+    375, 301, -325 , // bottom right &6
+    400, 301, -325 ,// bottom left &5
+    
+    //
+    375,301,-600 , // top left &1
+    325,301,-600 ,  // top right &2
+    325, 301, -575 , // bottom right &6
+    375, 301, -575 ,// bottom left &5
+    
+    375,301,-525 , // top left &1
+    325,301,-525 ,  // top right &2
+    325, 301, -475 , // bottom right &6
+    375, 301, -475 ,// bottom left &5
+    
+    375,301,-375 , // top left &1
+    325,301,-375 ,  // top right &
+    325, 301, -425 , // bottom right &6
+    375, 301, -425 ,// bottom left &5
+};
+
+GLfloat vertices_algo_negro_3[] ={
+    //
+    275,301,-525 , // top left &1
+    325,301,-525 ,  // top right &2
+    325, 301, -575 , // bottom right &6
+    275, 301, -575 ,// bottom left &5
+    
+    275,301,-425 , // top left &1
+    325,301,-425 ,  // top right &2
+    325, 301, -475 , // bottom right &6
+    275, 301, -475 ,// bottom left &5
+    
+    275,301,-375 , // top left &1
+    325,301,-375 ,  // top right &2
+    325, 301, -325 , // bottom right &6
+    275, 301, -325 ,// bottom left &5
+    
+    //
+    225,301,-325 , // top left &1
+    275,301,-325 ,  // top right &2
+    275, 301, -300 , // bottom right &6
+    225, 301, -300 ,// bottom left &5
+    
+    375,301,-325 , // top left &1
+    325,301,-325 ,  // top right &2
+    325, 301, -300 , // bottom right &6
+    375, 301, -300 ,// bottom left &5
+    
+};
+
+
+GLfloat vertices_algo_negro_1_a[] ={
+    
+    //
+    200,99,-525 , // top left &1
+    225,99,-525 ,  // top right &2
+    225, 99, -575 , // bottom right &6
+    200, 99, -575 ,// bottom left &5
+    
+    200,99,-425 , // top left &1
+    225,99,-425 ,  // top right &2
+    225, 99, -475 , // bottom right &6
+    200, 99, -475 ,// bottom left &5
+    
+    200,99,-375 , // top left &1
+    225,99,-375 ,  // top right &2
+    225, 99, -325 , // bottom right &6
+    200, 99, -325 ,// bottom left &5
+    
+    //
+    275,99,-600 , // top left &1
+    225,99,-600 ,  // top right &2
+    225, 99, -575 , // bottom right &6
+    275, 99, -575 ,// bottom left &5
+    
+    275,99,-525 , // top left &1
+    225,99,-525 ,  // top right &2
+    225, 99, -475 , // bottom right &6
+    275, 99, -475 ,// bottom left &5
+    
+    275,99,-375 , // top left &1
+    225,99,-375 ,  // top right &2
+    225, 99, -425 , // bottom right &6
+    275, 99, -425 ,// bottom left &5
+};
+
+GLfloat vertices_algo_negro_2_a[] ={
+    //
+    400,99,-525 , // top left &1
+    375,99,-525 ,  // top right &2
+    375, 99, -575 , // bottom right &6
+    400, 99, -575 ,// bottom left &5
+    
+    400,99,-425 , // top left &1
+    375,99,-425 ,  // top right &2
+    375, 99, -475 , // bottom right &6
+    400, 99, -475 ,// bottom left &5
+    
+    400,99,-375 , // top left &1
+    375,99,-375 ,  // top right &2
+    375, 99, -325 , // bottom right &6
+    400, 99, -325 ,// bottom left &5
+    
+    //
+    375,99,-600 , // top left &1
+    325,99,-600 ,  // top right &2
+    325, 99, -575 , // bottom right &6
+    375, 99, -575 ,// bottom left &5
+    
+    375,99,-525 , // top left &1
+    325,99,-525 ,  // top right &2
+    325, 99, -475 , // bottom right &6
+    375, 99, -475 ,// bottom left &5
+    
+    375,99,-375 , // top left &1
+    325,99,-375 ,  // top right &
+    325, 99, -425 , // bottom right &6
+    375, 99, -425 ,// bottom left &5
+};
+
+GLfloat vertices_algo_negro_3_a[] ={
+    //
+    275,99,-525 , // top left &1
+    325,99,-525 ,  // top right &2
+    325, 99, -575 , // bottom right &6
+    275, 99, -575 ,// bottom left &5
+    
+    275,99,-425 , // top left &1
+    325,99,-425 ,  // top right &2
+    325, 99, -475 , // bottom right &6
+    275, 99, -475 ,// bottom left &5
+    
+    275,99,-375 , // top left &1
+    325,99,-375 ,  // top right &2
+    325, 99, -325 , // bottom right &6
+    275, 99, -325 ,// bottom left &5
+    
+    //
+    225,99,-325 , // top left &1
+    275,99,-325 ,  // top right &2
+    275, 99, -300 , // bottom right &6
+    225, 99, -300 ,// bottom left &5
+    
+    375,99,-325 , // top left &1
+    325,99,-325 ,  // top right &2
+    325, 99, -300 , // bottom right &6
+    375, 99, -300 ,// bottom left &5
+    
+};
 
 GLfloat vertices_pata1[] ={
     // front face
@@ -882,8 +1391,6 @@ GLfloat traslatingX = 1.0f;
 GLfloat traslatingY = 1.0f;
 GLfloat traslatingZ = 1.0f;
 
-
-
 void keyCallback( GLFWwindow *window, int key, int scancode, int action, int mods ){
     //std::cout << key << std::endl;
     const GLfloat rotationSpeed = 10;
@@ -934,14 +1441,33 @@ void keyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
                 traslatingZ -= 10;
                 break;
                 
-                
+        
         }
     }
 }
 
+void initTexturas(){
+    
+    //Pegado sobre el polígono
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
+    //Filtros
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_DECAL);
+    
+    //Cargamos un fichero bmp en el array
+   // imagen[0]=LoadBMP("Raul.bmp");
+    
+    //Activamos las texturas
+    glEnable(GL_TEXTURE_2D);
+}
+
+
 void DrawPolygon( GLfloat vertices[] , GLfloat colorAux[] ){
     glPolygonMode( GL_FRONT_AND_BACK, fill_mode );
-
+    
     //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     //glColor3f( colour[0], colour[1], colour[2] );
     glEnableClientState( GL_VERTEX_ARRAY );
@@ -949,6 +1475,7 @@ void DrawPolygon( GLfloat vertices[] , GLfloat colorAux[] ){
     glVertexPointer( 3, GL_FLOAT, 0, vertices );
     glColorPointer(3, GL_FLOAT, 0, colorAux);
     
+   
     //glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST);
     
@@ -971,8 +1498,7 @@ void DrawLine( GLfloat vertices[] ){
 }
 
 
-
-int main( void ){
+int main(){
     GLFWwindow *window;
     
     // Initialize the library
@@ -1000,9 +1526,7 @@ int main( void ){
     // Make the window's context current
     glfwMakeContextCurrent( window );
     
-//    colortext = texture( myTextureSampler, UV ).rgb;
-    
-    GLuint VBO, VAO, EBO;
+    //    colortext = texture( myTextureSampler, UV ).rgb;
     
     glClearColor(0.1f, 0.2f, 0.2f, 0.0f);
     glViewport( 0.0f, 0.0f, screenWidth, screenHeight ); // specifies the part of the window to which OpenGL will draw (in pixels), convert from normalised to pixels
@@ -1015,8 +1539,13 @@ int main( void ){
     glMatrixMode( GL_MODELVIEW ); // (default matrix mode) modelview matrix defines how your objects are transformed (meaning translation, rotation and scaling) in your world
     glLoadIdentity( ); // same as above comment
     
+    
+
+    
     GLfloat halfScreenWidth = SCREEN_WIDTH / 2;
     GLfloat halfScreenHeight = SCREEN_HEIGHT / 2;
+    
+    
     
     
     // Loop until the user closes the window
@@ -1029,8 +1558,8 @@ int main( void ){
         
         glPushMatrix( );
         //glEnableClientState(GL_VERTEX_ARRAY);
-       
-        glTranslatef( halfScreenWidth, halfScreenHeight, -500 );
+        
+       glTranslatef( halfScreenWidth, halfScreenHeight, -500 );
         glRotatef( rotationX, 1, 0, 0 );
         glScalef(scalingX, scalingY, scalingZ);
         glTranslatef(traslatingX, traslatingY, traslatingZ);
@@ -1038,8 +1567,10 @@ int main( void ){
         
         
         glTranslatef( -halfScreenWidth, -halfScreenHeight, 500 );
-        DrawPolygon(vertices,color);
-        DrawLine(vertices);
+        
+      
+        
+        DrawPolygon(vertices,color_blanco);
         
         DrawPolygon(vertices_pata1,color);
         DrawLine(vertices_pata1);
@@ -1062,10 +1593,10 @@ int main( void ){
         DrawPolygon(vertices_oreja2,color_rosaFuerte);
         DrawLine(vertices_oreja2);
         
-        DrawPolygon(vertices_ojoizq,color_blanco);
+        DrawPolygon(vertices_ojoizq,color_amarillo_tranqui);
         DrawLine(vertices_ojoizq);
         
-        DrawPolygon(vertices_ojoder,color_blanco);
+        DrawPolygon(vertices_ojoder,color_amarillo_tranqui);
         DrawLine(vertices_ojoder);
         
         DrawPolygon(vertices_pupila_izq,color_negro);
@@ -1082,6 +1613,28 @@ int main( void ){
         
         DrawPolygon(vertices_lengüita,color_raro);
         DrawLine(vertices_lengüita);
+        
+        //DrawPolygon(vertices_algo_blanco_1,color_blanco);
+        //DrawPolygon(vertices_algo_blanco_2,color_blanco);
+        //DrawPolygon(vertices_algo_blanco_3,color_blanco);
+        DrawPolygon(vertices_algo_negro_1,color_negro);
+        DrawPolygon(vertices_algo_negro_2,color_negro);
+        DrawPolygon(vertices_algo_negro_3,color_negro);
+        DrawPolygon(vertices_algo_negro_1_a,color_negro);
+        DrawPolygon(vertices_algo_negro_2_a,color_negro);
+        DrawPolygon(vertices_algo_negro_3_a,color_negro);
+        //DrawPolygon(vertices_blanco_atras_1 ,color_blanco);
+        DrawPolygon(vertices_atras_negro_1 ,color_negro);
+        DrawPolygon(vertices_atras_negro_2 ,color_negro);
+        DrawPolygon(vertices_atras_negro_3 ,color_negro);
+        DrawPolygon(vertices_atras_negro_1_a ,color_negro);
+        DrawPolygon(vertices_atras_negro_2_a ,color_negro);
+        DrawPolygon(vertices_atras_negro_3_a ,color_negro);
+        //DrawPolygon(vertices_atras_blanco_3 ,color_blanco);
+        //DrawPolygon(vertices_atras_blanco_2 ,color_blanco);
+        
+       
+        
         
         glPopMatrix();
         // Swap front and back buffers
